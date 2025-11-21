@@ -30,7 +30,28 @@ def get_cpu_name():
                 print(f"CPU: {hodnota}")
                 break
 
+def get_cpu_cores():
+    with open("/proc/cpuinfo", "r") as file:
+        for line in file:
+            line = line.strip()
+            if "cpu cores" in line:
+                hodnota = line.split(":", 1)[1].strip()
+                print(f"Cores: {hodnota}")
+                break
 
+def get_ram_free():
+    with open("/proc/meminfo", "r") as file:
+        for line in file:
+            if line.startswith("MemAvailable:"):  # lepší než MemFree
+                return line.split()[1]  # jen číslo v kB
+
+def get_ram_total():
+    with open("/proc/meminfo", "r") as file:
+        for line in file:
+            if line.startswith("MemTotal:"):
+                return line.split()[1]
+
+              
 
 def main():
     get_host_name()
@@ -38,6 +59,10 @@ def main():
     get_timezone()
     print("----Hardware Info----")
     get_cpu_name()
+    get_cpu_cores()
+    print(f"RAM: {get_ram_total()} kB / {get_ram_free()} kB")
+   
+
 
 
 if __name__ == "__main__":
