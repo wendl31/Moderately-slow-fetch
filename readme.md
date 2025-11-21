@@ -1,0 +1,1 @@
+Its an fetch program for linux OSs. Its made in python so its moderately slow fetch (MSF). Its just fun little project. 
