@@ -1,3 +1,25 @@
+
+
+def get_conf():
+    result = []
+    reading = False
+
+    with open("config.cfg", "r") as file:
+        for line in file:
+            line = line.strip()
+
+            if line == "info_you_want:":
+                reading = True
+                continue
+
+            if reading:
+                if line == "" or line.endswith(":"):
+                    break
+                result.append(line)
+
+    return result
+
+
 def get_name_os():
     with open("/etc/os-release", "r") as file:
         for line in file:
@@ -49,7 +71,14 @@ def get_ram_total():
             if line.startswith("MemTotal:"):
                 return line.split()[1]
 
+def ram():
+    print(f"RAM: {get_ram_total()} kB / {get_ram_free()} kB")
 
+def hardware():
+    print("----Hardware Info----")
+
+def space():
+    print()
 
 def get_uptime():  
     with open("/proc/uptime", "r") as file:
@@ -59,21 +88,36 @@ def get_uptime():
             min_cislo  = round(min_cislo, 2)
             print(f"Uptime {min_cislo} mins")
         
+def space():
+    print()
+
+def harware():
+    print("-----Hardware-----")
+
+info_you_want_dict = {
+"get_host_name": get_host_name,
+"get_name_os": get_name_os,
+"get_timezone": get_timezone,
+"get_cpu_name": get_cpu_name,
+"get_cpu_cores": get_cpu_cores,
+"get_ram": ram,
+"get_uptime": get_uptime,
+"space": space,
+"Hardware": hardware}
+
 def main():
-    get_host_name()
-    print()
-    get_name_os()
-    get_timezone()
-    print()
-    print("----Hardware Info----")
-    print()
-    get_cpu_name()
-    get_cpu_cores()
-    print(f"RAM: {get_ram_total()} kB / {get_ram_free()} kB")
-    print()
-    get_uptime()
+    wanted = get_conf()
+
+    for item in wanted:
+        func = info_you_want_dict.get(item)
+        if func:
+            func()
+        else:
+            print(f"Unknown item in config: {item}")
 
 
 
 if __name__ == "__main__":
     main()
+
+
